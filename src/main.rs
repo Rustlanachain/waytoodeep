@@ -4,19 +4,16 @@ use tracing_subscriber::EnvFilter;
 use reqwest::Client;
 
 #[tokio::main]
+
 async fn main() -> Result<(), Report> {
     setup()?;
-
+    pub const URL_1: &str = "https://fasterthanli.me/articles/whats-in-the-box";
+    pub const URL_2: &str = "https://fasterthanli.me/series/advent-of-code-2020/part-13";
     info!("Hello from a comfy nest we've made for ourselves");
 
     let client = Client::new();
-    let url = "https://fasterthanli.me";
-    // this will turn non-200 HTTP status codes into rust errors,
-    // so the first `?` propagates "we had a connection problem" and
-    // the second `?` propagates "we had a chat with the server and they
-    // were not pleased"
-    let res = client.get(url).send().await?.error_for_status()?;
-    info!(%url, content_type = ?res.headers().get("content-type"), "Got a response!");
+    fetch_thing(&client, URL_1);
+    fetch_thing(&client, URL_2);
 
     Ok(())
 }
