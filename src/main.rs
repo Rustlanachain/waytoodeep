@@ -2,22 +2,22 @@ use color_eyre::Report;
 use tracing::info;
 use tracing_subscriber::EnvFilter;
 use reqwest::Client;
+use std::future::Future;
 
 #[tokio::main]
-
 async fn main() -> Result<(), Report> {
     setup()?;
     pub const URL_1: &str = "https://fasterthanli.me/articles/whats-in-the-box";
-    pub const URL_2: &str = "https://fasterthanli.me/series/advent-of-code-2020/part-13";
-    info!("Hello from a comfy nest we've made for ourselves");
 
+    info!("Building that fetch future...");
     let client = Client::new();
-    fetch_thing(&client, URL_1);
-    fetch_thing(&client, URL_2);
+    let fut = fetch_thing(&client, URL_1);
+    info!("Awaiting that fetch future...");
+    fut.await?;
+    info!("Done awaiting that fetch future");
 
     Ok(())
 }
-
 fn setup() -> Result<(), Report> {
     if std::env::var("RUST_LIB_BACKTRACE").is_err() {
         std::env::set_var("RUST_LIB_BACKTRACE", "1")
