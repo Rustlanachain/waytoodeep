@@ -33,8 +33,13 @@ fn setup() -> Result<(), Report> {
 
     Ok(())
 }
-async fn fetch_thing(client: &Client, url: &str) -> Result<(), Report> {
-    let res = client.get(url).send().await?.error_for_status()?;
-    info!(%url, content_type = ?res.headers().get("content-type"), "Got a response!");
-    Ok(())
+fn fetch_thing<'a>(
+    client: &'a Client,
+    url: &'a str,
+) -> impl Future<Output = Result<(), Report>> + 'a {
+    async move {
+        let res = client.get(url).send().await?.error_for_status()?;
+        info!(%url, content_type = ?res.headers().get("content-type"), "Got a response!");
+        Ok(())
+    }
 }
